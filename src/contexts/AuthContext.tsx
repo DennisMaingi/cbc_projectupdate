@@ -136,28 +136,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return true;
         }
         
-        // If Supabase auth fails, fall back to mock authentication
-        console.log('Supabase auth failed, falling back to mock auth');
       } catch (error) {
-        console.log('Supabase auth error, falling back to mock auth:', error);
+        console.log('Supabase auth failed, using mock authentication');
       }
     }
     
     // Mock authentication fallback
-    {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const foundUser = mockUsers.find(u => u.email === email);
-      if (foundUser && password === 'demo123') {
-        setUser(foundUser);
-        localStorage.setItem('cbc_user', JSON.stringify(foundUser));
-        setIsLoading(false);
-        return true;
-      }
-      
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const foundUser = mockUsers.find(u => u.email === email);
+    if (foundUser && password === 'demo123') {
+      setUser(foundUser);
+      localStorage.setItem('cbc_user', JSON.stringify(foundUser));
       setIsLoading(false);
-      return false;
+      return true;
     }
+    
+    setIsLoading(false);
+    return false;
   };
 
   const logout = async () => {
