@@ -148,7 +148,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       } catch (error) {
         console.log('Supabase authentication failed:', error);
       }
-      }
     }
     
     // Authentication failed
