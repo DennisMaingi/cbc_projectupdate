@@ -11,7 +11,6 @@ import {
   ClipboardList,
   Calendar,
   CreditCard
-  CreditCard
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
