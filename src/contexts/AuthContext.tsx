@@ -122,7 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     
-    // Check for mock users first to avoid Supabase errors for demo accounts
+    // Check for mock users first to completely avoid Supabase for demo accounts
     const foundUser = mockUsers.find(u => u.email === email);
     if (foundUser && password === 'demo123') {
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -132,7 +132,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return true;
     }
     
-    // Try Supabase authentication for non-demo users if configured
+    // Only try Supabase authentication for non-demo users if configured
     if (supabase) {
       try {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -145,9 +145,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setIsLoading(false);
           return true;
         }
-        
       } catch (error) {
-        console.log('Supabase auth failed');
+        console.log('Supabase authentication failed:', error);
+      }
       }
     }
     
