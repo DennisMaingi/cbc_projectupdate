@@ -122,7 +122,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     
-    // Try Supabase authentication first if configured
+    // Check for mock users first to avoid Supabase errors for demo accounts
+    const foundUser = mockUsers.find(u => u.email === email);
+    if (foundUser && password === 'demo123') {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setUser(foundUser);
+      localStorage.setItem('cbc_user', JSON.stringify(foundUser));
+      setIsLoading(false);
+      return true;
+    }
+    
+    // Try Supabase authentication for non-demo users if configured
     if (supabase) {
       try {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -137,21 +147,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
         
       } catch (error) {
-        console.log('Supabase auth failed, using mock authentication');
+        console.log('Supabase auth failed');
       }
     }
     
-    // Mock authentication fallback
+    // Authentication failed
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const foundUser = mockUsers.find(u => u.email === email);
-    if (foundUser && password === 'demo123') {
-      setUser(foundUser);
-      localStorage.setItem('cbc_user', JSON.stringify(foundUser));
-      setIsLoading(false);
-      return true;
-    }
-    
     setIsLoading(false);
     return false;
   };
