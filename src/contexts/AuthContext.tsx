@@ -90,13 +90,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const initializeAuth = async () => {
-      // Check for existing session in localStorage for demo mode
-      const savedUser = localStorage.getItem('cbc_user');
-      if (savedUser) {
-        setUser(JSON.parse(savedUser));
+      if (!supabase) {
+        // If Supabase is not configured, use mock mode
+        const savedUser = localStorage.getItem('cbc_user');
+        if (savedUser) {
+          setUser(JSON.parse(savedUser));
+        }
+      } else {
+        // If Supabase is configured, try to refresh user from Supabase
+        await refreshUser();
       }
-      
-      await refreshUser();
       setIsLoading(false);
     };
 
